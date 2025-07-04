@@ -106,9 +106,18 @@ class Exp_Informer(Exp_Basic):
         model_optim = optim.Adam(self.model.parameters(), lr=self.args.learning_rate)
         return model_optim
     
+    # def _select_criterion(self):
+        # criterion =  nn.MSELoss()
+        # return criterion
+    
     def _select_criterion(self):
-        criterion =  nn.MSELoss()
-        return criterion
+        if self.args.loss == 'smooth':
+            print("📌 Usando SmoothL1Loss (Huber Loss)")
+            return nn.SmoothL1Loss()
+        else:
+            print("📌 Usando MSELoss")
+            return nn.MSELoss()
+
 
     def vali(self, vali_data, vali_loader, criterion):
         self.model.eval()
