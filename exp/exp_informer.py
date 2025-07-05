@@ -4,6 +4,7 @@ from models.model import Informer, InformerStack
 
 from utils.tools import EarlyStopping, adjust_learning_rate
 from utils.metrics import metric
+from utils.quantile_loss import QuantileLoss
 
 import numpy as np
 
@@ -111,12 +112,16 @@ class Exp_Informer(Exp_Basic):
         # return criterion
     
     def _select_criterion(self):
-        if self.args.loss == 'smooth':
+        if self.args.loss == 'quantile':
+            print("📌 Usando QuantileLoss")
+            return QuantileLoss(self.args.quantiles)
+        elif self.args.loss == 'smooth':
             print("📌 Usando SmoothL1Loss (Huber Loss)")
             return nn.SmoothL1Loss()
         else:
             print("📌 Usando MSELoss")
             return nn.MSELoss()
+
 
 
     def vali(self, vali_data, vali_loader, criterion):
